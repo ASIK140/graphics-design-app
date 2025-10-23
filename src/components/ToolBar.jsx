@@ -4,19 +4,36 @@ import { FaTextHeight, FaIcons, FaListUl, FaUpload } from "react-icons/fa6";
 import { IoImagesSharp } from "react-icons/io5";
 import { FaShapes, FaPaintBrush } from "react-icons/fa";
 import ToolModal from "./modal/ToolModal";
+import TextTool from "./ui/TextTool";
+import ImageTool from "./ui/ImageTool";
+import ShapeTool from "./ui/ShapeTool";
+import { Rect } from "fabric";
 
-function ToolBar() {
+function ToolBar({ canvas }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [tool, setTool] = useState(null);
   const handleNavClick = (item) => {
     setIsModalOpen(true);
-    console.log(isModalOpen);
+    setTool(item);
+  };
+  const addReact = () => {
+    if (canvas) {
+      const react = new Rect({
+        top: 100,
+        left: 50,
+        width: 100,
+        height: 60,
+        fill: "#000",
+      });
+      canvas.add(react);
+    }
   };
   return (
     <div className="bg-white h-full w-[230px] relative">
       <ToolModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2 className="text-xl font-semibold mb-4"> Modal</h2>
-        <p className="text-gray-600">This is the modal content for.</p>
+        {tool == "Text" ? <TextTool /> : null}
+        {tool == "Images" ? <ImageTool /> : null}
+        {tool == "Shapes" ? <ShapeTool /> : null}
       </ToolModal>
 
       <section className="mt-5">
