@@ -19,7 +19,7 @@ const images = [
     url: "https://images.unsplash.com/photo-1611915387288-fd8d2f5f928b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjN8fGFuaW1hbHxlbnwwfDJ8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600",
   },
 ];
-function ImageTool() {
+function ImageTool({ action }) {
   return (
     <div>
       <section>
@@ -30,6 +30,9 @@ function ImageTool() {
               key={index}
               src={image.url}
               className="h-20 w-20 cursor-pointer"
+              onClick={() => {
+                action(image.url);
+              }}
             />
           ))}
         </section>

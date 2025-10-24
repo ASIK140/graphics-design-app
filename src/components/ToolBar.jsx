@@ -9,24 +9,12 @@ import ImageTool from "./ui/ImageTool";
 import ShapeTool from "./ui/ShapeTool";
 import { Rect } from "fabric";
 
-function ToolBar({ canvas }) {
+function ToolBar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tool, setTool] = useState(null);
   const handleNavClick = (item) => {
     setIsModalOpen(true);
     setTool(item);
-  };
-  const addReact = () => {
-    if (canvas) {
-      const react = new Rect({
-        top: 100,
-        left: 50,
-        width: 100,
-        height: 60,
-        fill: "#000",
-      });
-      canvas.add(react);
-    }
   };
   return (
     <div className="bg-white h-full w-[230px] relative">

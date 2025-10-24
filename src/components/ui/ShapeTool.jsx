@@ -13,7 +13,11 @@ function ShapeTool({ action }) {
           className="cursor-pointer"
           onClick={action.addSquare}
         />
-        <FaSquare size={50} className="cursor-pointer" />
+        <FaSquare
+          size={50}
+          className="cursor-pointer"
+          onClick={action.addRounded}
+        />
         <FaCircle
           size={50}
           className="cursor-pointer"
