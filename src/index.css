@@ -8,6 +8,29 @@ body {
   padding: 0;
   box-sizing: border-box;
 }
+@layer utilities {
+  .text-outline-black-thick {
+    -webkit-text-stroke: 4px black; /* Adjust thickness here (e.g., 3px, 4px, 5px) */
+    text-stroke: 4px black; /* Standard property for better compatibility */
+    /* Ensure the fill is transparent for the gradient to show through */
+    color: transparent; /* This ensures text-transparent isn't overridden if placed later */
+  }
+  .text-outline-white {
+    /* Set the white stroke (outline color and width) */
+    -webkit-text-stroke: 1.5px white;
+    text-stroke: 1.5px white;
+  }
+  .text-outline-orange {
+    /* Set the white stroke (outline color and width) */
+    -webkit-text-stroke: 1.5px #ff6a00;
+    text-stroke: 1.5px #ff6a00;
+  }
+  .text-outline-blue {
+    /* Set the white stroke (outline color and width) */
+    -webkit-text-stroke: 0.5px #2ec0ff;
+    text-stroke: 0.5px #2ec0ff;
+  }
+}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
