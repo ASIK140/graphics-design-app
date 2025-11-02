@@ -28,6 +28,7 @@ function TextProperties({
   onFontSizeChange,
   fontWeight,
   onFontChange,
+  color,
   onColorChange,
   font,
   onFontWeightChange,
@@ -85,7 +86,12 @@ function TextProperties({
             />
           </section>
           <section className="flex gap-2">
-            <Inputs icon="Fill" type="color" onChange={onColorChange} />
+            <Inputs
+              icon="Fill"
+              type="color"
+              value={color}
+              onChange={onColorChange}
+            />
             <select
               className="bg-gray-100 text-sm capitalize py-1 px-1 border-2 border-black-200 w-1/2  h-8"
               onChange={onTextAlign}

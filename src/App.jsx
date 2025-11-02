@@ -27,11 +27,13 @@ import { addLogo } from "./utils/LogoTool";
 import UploadTool from "./components/ui/UploadTool";
 import SchoolNameTool from "./components/ui/SchoolNameTool";
 import { Textbox } from "fabric";
+import useUndoRedo from "./hooks/useUndoRedo";
 
 function App() {
   const { canvasRef, canvas } = useFabricCanvas({ width: 430, height: 600 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tool, setTool] = useState(null);
+  const { undo, saveState } = useUndoRedo(canvas);
 
   const handleNavClick = (item) => {
     setIsModalOpen(true);
@@ -100,12 +102,18 @@ function App() {
       return;
     }
 
+    canvas.on("object:added", saveState);
+    canvas.on("object:modified", saveState);
+    canvas.on("object:removed", saveState);
     document.addEventListener("keydown", deleteActiveObject);
 
     return () => {
       document.removeEventListener("keydown", deleteActiveObject);
+      canvas.off("object:added", saveState);
+      canvas.off("object:modified", saveState);
+      canvas.off("object:removed", saveState);
     };
-  }, [canvas, deleteActiveObject]);
+  }, [canvas, deleteActiveObject, saveState]);
   const exportAsPNG = () => {
     const fileName = prompt("Enter file name:");
     if (canvas) {
@@ -169,6 +177,7 @@ function App() {
         onExport={exportAsPNG}
         onSave={saveCanvasState}
         onOpen={handleFileOpen}
+        undo={undo}
       />
       <main className="flex justify-between flex-1 items-center">
         <div className="bg-white h-full w-[230px] relative">

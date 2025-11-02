@@ -72,7 +72,7 @@ function Settings({ canvas }) {
   const handleStrokeChange = (e) => {
     const intValue = parseInt(e.target.value.replace(/,/g, ""), 10);
     setStroke(intValue);
-    if (selectedObject?.type === "circle" && intValue > 0) {
+    if (selectedObject?.type === "circle" && intValue >= 0) {
       selectedObject.set({ strokeWidth: intValue });
       canvas.renderAll();
     }
@@ -149,6 +149,7 @@ function Settings({ canvas }) {
           onFontChange={handleFontChange}
           canvas={canvas}
           onTextAlign={handleTextAlign}
+          color={color}
         />
       )}
     </div>

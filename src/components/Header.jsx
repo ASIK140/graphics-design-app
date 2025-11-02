@@ -1,11 +1,18 @@
 import React, { useRef } from "react";
-
-function Header({ onExport, onOpen, onSave }) {
+import { FaUndo } from "react-icons/fa";
+function Header({ onExport, onOpen, onSave, undo }) {
   const fileInputRef = useRef(null);
   return (
     <header className="flex justify-between bg-white py-3 px-5 items-center">
       <div>LOGO</div>
       <section className="flex gap-2">
+        <button
+          className="text-xl bg-amber-300 p-3  rounded-full cursor-pointer"
+          onClick={undo}
+        >
+          <FaUndo />
+        </button>
+
         <button
           className="bg-[#11224E] p-2 rounded-md text-white px-5 cursor-pointer"
           onClick={() => fileInputRef.current.click()}
