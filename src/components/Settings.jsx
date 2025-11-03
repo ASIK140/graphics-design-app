@@ -3,7 +3,7 @@ import RectProperties from "./RectProperties";
 import CircleProperties from "./CircleProperties";
 import TextProperties from "./TextProperties";
 
-function Settings({ canvas }) {
+function Settings({ canvas, isSideBarOpen }) {
   const {
     selectedObject,
     width,
@@ -108,7 +108,12 @@ function Settings({ canvas }) {
     }
   };
   return (
-    <div className="bg-white h-full w-[230px]">
+    <div
+      className={`bg-white w-[230px] py-2 transition-all fixed md:right-0 z-99 ${
+        isSideBarOpen ? "right-0" : "-right-full"
+      }
+    `}
+    >
       <section className="px-5">
         <h1 className="font-semibold text-xl">Tool Properties</h1>
       </section>

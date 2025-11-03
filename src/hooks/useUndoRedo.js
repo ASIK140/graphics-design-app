@@ -16,6 +16,5 @@ export default function useUndoRedo(canvas) {
     const prev = undoStack.current[undoStack.current.length - 1];
     canvas.loadFromJSON(prev).then((canvas) => canvas.requestRenderAll());
   };
-
   return { saveState, undo };
 }
