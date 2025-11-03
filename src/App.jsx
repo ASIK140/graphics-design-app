@@ -20,6 +20,8 @@ import {
   FaUpload,
   FaShapes,
 } from "react-icons/fa6";
+import { RiSendToBack, RiBringToFront } from "react-icons/ri";
+import { IoIosCloseCircle } from "react-icons/io";
 import { FaBuilding } from "react-icons/fa";
 import { FaPaintBrush } from "react-icons/fa";
 import { IoImagesSharp } from "react-icons/io5";
@@ -45,6 +47,22 @@ function App() {
     setIsModalOpen(true);
     setTool(item);
   };
+
+  const bringForward = () => {
+    const active = canvas.getActiveObject();
+    if (active) {
+      canvas.bringObjectForward(active);
+      canvas.requestRenderAll();
+    }
+  };
+  const sendBackward = () => {
+    const active = canvas.getActiveObject();
+    if (active) {
+      canvas.sendObjectBackwards(active);
+      canvas.requestRenderAll();
+    }
+  };
+
   // Toggles the mobile sidebar
   const handleSideBar = () => {
     setSideBarOpen(!isSideBarOpen);
@@ -88,8 +106,6 @@ function App() {
     [canvas]
   );
   const handleDelete = () => {
-    console.log("click");
-
     const activeObjects = canvas.getActiveObjects();
 
     if (activeObjects.length > 0) {
@@ -207,14 +223,22 @@ function App() {
       <section className="w-full bg-gray-100 text-2xl flex justify-between px-7 py-3 md:hidden">
         {/* Menu icon to toggle the mobile sidebar */}
         {/* <IoMenu className="cursor-pointer" onClick={handleSideBar} /> */}
-        <section className="flex gap-5 relative">
+        <section className="flex gap-5">
           {showDelete && (
-            <button
-              className="absolute bg-red-500 px-2 font-extrabold top-10 left-40 rounded-2xl text-white cursor-pointer z-10"
-              onClick={handleDelete}
-            >
-              X
-            </button>
+            <section className="absolute bottom-3 left-33 z-10 flex items-center gap-2 bg-white px-4 py-2 rounded-xl">
+              <button
+                className="text-3xl text-red-500 cursor-pointer"
+                onClick={handleDelete}
+              >
+                <IoIosCloseCircle />
+              </button>
+              <button onClick={sendBackward} className="text-3xl">
+                <RiSendToBack />
+              </button>
+              <button onClick={bringForward} className="text-3xl">
+                <RiBringToFront />
+              </button>
+            </section>
           )}
           <FaTextHeight onClick={() => handleNavClick("Text")} />
           <IoImagesSharp onClick={() => handleNavClick("Images")} />
