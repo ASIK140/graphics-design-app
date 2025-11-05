@@ -14,6 +14,8 @@ export function useFabricSelection(canvas) {
   const [fontSize, setFontSize] = useState("");
   const [fontWeight, setFontWeight] = useState("");
   const [textAlign, setTextAlign] = useState("");
+  const [opacity, setOpacity] = useState("");
+  const [angle, setAngle] = useState("");
   useEffect(() => {
     if (!canvas) return;
 
@@ -29,6 +31,8 @@ export function useFabricSelection(canvas) {
       setFontSize,
       setFontWeight,
       setTextAlign,
+      setOpacity,
+      setAngle,
     };
 
     const onCreated = (e) => handleObjectSelected(e.selected[0], setters);
@@ -69,7 +73,11 @@ export function useFabricSelection(canvas) {
     textAlign,
     color,
     stroke,
+    angle,
+    setAngle,
     strokeColor,
+    opacity,
+    setOpacity,
     setWidth,
     setHeight,
     setDiameter,

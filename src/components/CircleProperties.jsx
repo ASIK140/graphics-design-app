@@ -9,6 +9,8 @@ export default function CircleProperties({
   onColorChange,
   onStrokeChange,
   onStrokeColorChange,
+  opacity,
+  onOpacityChange,
 }) {
   return (
     <section className="flex justify-between px-2 flex-wrap gap-3">
@@ -25,6 +27,12 @@ export default function CircleProperties({
         value={strokeColor}
         onChange={onStrokeColorChange}
         type="color"
+      />
+      <Inputs
+        icon="O"
+        value={opacity * 100}
+        onChange={onOpacityChange}
+        type="number"
       />
     </section>
   );

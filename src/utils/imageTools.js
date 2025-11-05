@@ -11,10 +11,10 @@ export const addImage = async (canvas, url) => {
     img.set({
       left: 100,
       top: 100,
-      scaleX: 0.5,
-      scaleY: 0.5,
+      scaleX: 0.2,
+      scaleY: 0.2,
     });
-
+    img.isImage = true;
     canvas.add(img);
     canvas.renderAll();
   } catch (err) {

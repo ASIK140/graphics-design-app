@@ -18,7 +18,7 @@ export const addBG = async (canvas, url) => {
       scaleY: scaleY,
     });
     canvas.backgroundImage = img;
-    canvas.renderAll();
+    canvas.requestRenderAll();
   } catch (err) {
     console.error("Error loading image:", err);
   }

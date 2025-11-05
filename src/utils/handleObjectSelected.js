@@ -14,8 +14,11 @@ export function handleObjectSelected(object, setters) {
     setFontSize,
     setFontWeight,
     setTextAlign,
+    setOpacity,
+    setAngle,
   } = setters;
-
+  setOpacity(object.opacity);
+  setAngle(object.angle);
   setSelectedObject(object);
 
   switch (object.type) {
@@ -23,6 +26,8 @@ export function handleObjectSelected(object, setters) {
       setWidth(Math.round(object.width * object.scaleX));
       setHeight(Math.round(object.height * object.scaleY));
       setColor(object.fill || "");
+      setStroke(object.strokeWidth);
+      setStrokeColor(object.stroke);
       setDiameter("");
       // setRadiusX(object.rx || "");
       // setRadiusY(object.ry || "");
@@ -40,6 +45,8 @@ export function handleObjectSelected(object, setters) {
     case "triangle":
       setWidth(Math.round(object.width * object.scaleX));
       setHeight(Math.round(object.height * object.scaleY));
+      setStroke(object.strokeWidth);
+      setStrokeColor(object.stroke);
       setColor(object.fill || "");
       setDiameter("");
       break;
@@ -54,7 +61,12 @@ export function handleObjectSelected(object, setters) {
       setTextAlign(object.textAlign);
       setDiameter("");
       break;
-
+    case "image":
+      setWidth(Math.round(object.width * object.scaleX));
+      setHeight(Math.round(object.height * object.scaleY));
+      setDiameter("");
+      setColor("");
+      break;
     default:
       // fallback for unsupported types
       setWidth("");

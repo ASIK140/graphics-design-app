@@ -1,6 +1,6 @@
 import React from "react";
 
-function TextTool({ action }) {
+function TextTool({ action, addWordCurvature }) {
   return (
     <div>
       <section>
@@ -71,6 +71,18 @@ function TextTool({ action }) {
         <h1
           className="text-6xl cursor-pointer font-extrabold  text-white  text-outline-blue [text-shadow:4px_4px_4px_rgba(0,0,0,0.3)]"
           onClick={action.addWordArt_7}
+        >
+          A
+        </h1>
+      </section>
+      <section>
+        <h1 className=" font-semibold mt-2">Word Curvature</h1>
+        <hr className="border-gray-300" />
+      </section>
+      <section className="flex flex-wrap gap-3">
+        <h1
+          className="text-6xl font-extrabold cursor-pointer"
+          onClick={addWordCurvature}
         >
           A
         </h1>

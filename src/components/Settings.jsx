@@ -2,18 +2,29 @@ import { useFabricSelection } from "../hooks/useFabricSelection";
 import RectProperties from "./RectProperties";
 import CircleProperties from "./CircleProperties";
 import TextProperties from "./TextProperties";
+import CanvasProperties from "./CanvasProperties";
+import { useEffect, useState } from "react";
+import ImageProperties from "./ImageProperties";
+import { applyMask } from "../utils/imageMask";
 
 function Settings({ canvas, isSideBarOpen }) {
+  const [canvasWidth, setCanvasWidth] = useState("");
+  const [canvasHeight, setCanvasHeight] = useState("");
+  const [canvasColor, setCanvasColor] = useState("");
   const {
     selectedObject,
     width,
     height,
     diameter,
+    opacity,
+    setOpacity,
     color,
     stroke,
     strokeColor,
     fontSize,
     font,
+    angle,
+    setAngle,
     fontWeight,
     textAlign,
     setWidth,
@@ -25,12 +36,27 @@ function Settings({ canvas, isSideBarOpen }) {
     setFontSize,
     setTextAlign,
   } = useFabricSelection(canvas);
+  useEffect(() => {
+    if (canvas) {
+      setCanvasHeight(canvas.getHeight());
+      setCanvasWidth(canvas.getWidth());
+      setCanvasColor(canvas.backgroundColor);
+    }
+  }, [canvas]);
 
+  const handleCanvasColorChange = (e) => {
+    const value = e.target.value;
+    setCanvasColor(value);
+    if (canvas) {
+      canvas.backgroundColor = value;
+      canvas.renderAll();
+    }
+  };
   // Handlers (unchanged, but now use hook state)
   const handleWidthChange = (e) => {
     const intValue = parseInt(e.target.value.replace(/,/g, ""), 10);
     setWidth(intValue);
-    if (selectedObject?.type === "rect" && intValue >= 0) {
+    if (selectedObject && intValue >= 0) {
       selectedObject.set({ width: intValue / selectedObject.scaleX });
       canvas.renderAll();
     }
@@ -39,7 +65,7 @@ function Settings({ canvas, isSideBarOpen }) {
   const handleHeightChange = (e) => {
     const intValue = parseInt(e.target.value.replace(/,/g, ""), 10);
     setHeight(intValue);
-    if (selectedObject?.type === "rect" && intValue >= 0) {
+    if (selectedObject && intValue >= 0) {
       selectedObject.set({ height: intValue / selectedObject.scaleY });
       canvas.renderAll();
     }
@@ -72,7 +98,7 @@ function Settings({ canvas, isSideBarOpen }) {
   const handleStrokeChange = (e) => {
     const intValue = parseInt(e.target.value.replace(/,/g, ""), 10);
     setStroke(intValue);
-    if (selectedObject?.type === "circle" && intValue >= 0) {
+    if (selectedObject && intValue >= 0) {
       selectedObject.set({ strokeWidth: intValue });
       canvas.renderAll();
     }
@@ -107,6 +133,32 @@ function Settings({ canvas, isSideBarOpen }) {
       canvas.renderAll();
     }
   };
+  const handleOpacityChange = (e) => {
+    let value = e.target.value;
+    value = value / 100;
+    setOpacity(value);
+    if (selectedObject) {
+      selectedObject.set({ opacity: value });
+      canvas.renderAll();
+    }
+  };
+
+  const horizontallyFlip = () => {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      activeObject.set({ flipX: !activeObject.flipX });
+      canvas.renderAll();
+    }
+  };
+
+  const verticallyFlip = () => {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      activeObject.set({ flipY: !activeObject.flipY });
+      canvas.renderAll();
+    }
+  };
+
   return (
     <div
       className={`bg-white w-[230px] py-2 transition-all fixed md:right-0 z-99 ${
@@ -118,18 +170,46 @@ function Settings({ canvas, isSideBarOpen }) {
         <h1 className="font-semibold text-xl">Tool Properties</h1>
       </section>
       <hr className="border-gray-200 my-2" />
-
+      {!selectedObject && (
+        <CanvasProperties
+          height={canvasHeight}
+          width={canvasWidth}
+          color={canvasColor}
+          onColorChange={handleCanvasColorChange}
+        />
+      )}
       {selectedObject?.type === "rect" && (
         <RectProperties
           width={width}
           height={height}
           color={color}
+          stroke={stroke}
+          strokeColor={strokeColor}
+          onStrokeChange={handleStrokeChange}
+          onStrokeColorChange={handleStrokeColorChange}
           onWidthChange={handleWidthChange}
           onHeightChange={handleHeightChange}
           onColorChange={handleColorChange}
+          opacity={opacity}
+          onOpacityChange={handleOpacityChange}
         />
       )}
-
+      {selectedObject?.type === "triangle" && (
+        <RectProperties
+          width={width}
+          height={height}
+          color={color}
+          stroke={stroke}
+          strokeColor={strokeColor}
+          onStrokeChange={handleStrokeChange}
+          onStrokeColorChange={handleStrokeColorChange}
+          onWidthChange={handleWidthChange}
+          onHeightChange={handleHeightChange}
+          onColorChange={handleColorChange}
+          opacity={opacity}
+          onOpacityChange={handleOpacityChange}
+        />
+      )}
       {selectedObject?.type === "circle" && (
         <CircleProperties
           diameter={diameter}
@@ -140,6 +220,8 @@ function Settings({ canvas, isSideBarOpen }) {
           onStrokeChange={handleStrokeChange}
           onColorChange={handleColorChange}
           onStrokeColorChange={handleStrokeColorChange}
+          opacity={opacity}
+          onOpacityChange={handleOpacityChange}
         />
       )}
       {selectedObject?.type === "textbox" && (
@@ -155,6 +237,17 @@ function Settings({ canvas, isSideBarOpen }) {
           canvas={canvas}
           onTextAlign={handleTextAlign}
           color={color}
+        />
+      )}
+      {selectedObject?.type === "image" && (
+        <ImageProperties
+          height={height}
+          width={width}
+          onWidthChange={handleWidthChange}
+          onHeightChange={handleHeightChange}
+          onApplyMask={(shape) => applyMask(canvas, shape)}
+          onHFlip={horizontallyFlip}
+          onVFlip={verticallyFlip}
         />
       )}
     </div>

@@ -9,7 +9,7 @@ export default function useFabricCanvas({ width = 500, height = 600 }) {
   useEffect(() => {
     if (canvasRef.current) {
       const initCanvas = new Canvas(canvasRef.current, { width, height });
-      initCanvas.backgroundColor = "#fff";
+      initCanvas.backgroundColor = "#ffffff";
       initCanvas.renderAll();
       setCanvas(initCanvas);
       return () => initCanvas.dispose();

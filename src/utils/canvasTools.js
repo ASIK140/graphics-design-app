@@ -2,7 +2,16 @@ import { Rect, Circle, Triangle, Textbox, Shadow, Gradient } from "fabric";
 
 export const addSquare = (canvas) => {
   canvas.add(
-    new Rect({ top: 100, left: 50, width: 100, height: 100, fill: "#000000" })
+    new Rect({
+      top: 100,
+      left: 50,
+      width: 100,
+      stroke: "#000000",
+      strokeWidth: 2,
+      height: 100,
+      fill: "#000000",
+      opacity: 1,
+    })
   );
 };
 
@@ -13,9 +22,12 @@ export const addRoundedSquare = (canvas) => {
       left: 50,
       width: 100,
       height: 100,
+      stroke: "#000000",
+      strokeWidth: 2,
       fill: "#000000",
       rx: 10,
       ry: 10,
+      opacity: 1,
     })
   );
 };
@@ -29,13 +41,23 @@ export const addCircle = (canvas) => {
       top: 100,
       stroke: "black",
       strokeWidth: 2,
+      opacity: 1,
     })
   );
 };
 
 export const addTriangle = (canvas) => {
   canvas.add(
-    new Triangle({ top: 100, left: 70, width: 100, height: 100, fill: "#000" })
+    new Triangle({
+      top: 100,
+      left: 70,
+      width: 100,
+      height: 100,
+      fill: "#000",
+      stroke: "black",
+      strokeWidth: 2,
+      opacity: 1,
+    })
   );
 };
 

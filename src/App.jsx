@@ -1,46 +1,62 @@
-import { useEffect, useState, useCallback } from "react";
-
+import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import ToolModal from "./components/modal/ToolModal";
 import ToolButton from "./components/ui/ToolButton";
 import TextTool from "./components/ui/TextTool";
 import ImageTool from "./components/ui/ImageTool";
 import ShapeTool from "./components/ui/ShapeTool";
+import Settings from "./components/Settings";
+import BGTool from "./components/ui/BGTool";
+import LogoTool from "./components/ui/LogoTool";
+import UploadTool from "./components/ui/UploadTool";
+import SchoolNameTool from "./components/ui/SchoolNameTool";
 
-import { IoMenu, IoSettings } from "react-icons/io5";
-
-import useFabricCanvas from "./hooks/useFabricCanvas";
-import * as tools from "./utils/canvasTools";
-import { addImage } from "./utils/imageTools";
-import { addBG } from "./utils/backGroundTool";
 import {
   FaTextHeight,
   FaIcons,
   FaListUl,
   FaUpload,
   FaShapes,
+  FaBuilding,
 } from "react-icons/fa6";
-import { RiSendToBack, RiBringToFront } from "react-icons/ri";
-import { IoIosCloseCircle } from "react-icons/io";
-import { FaBuilding } from "react-icons/fa";
 import { FaPaintBrush } from "react-icons/fa";
-import { IoImagesSharp } from "react-icons/io5";
-import Settings from "./components/Settings";
-import BGTool from "./components/ui/BGTool";
-import LogoTool from "./components/ui/LogoTool";
-import { addLogo } from "./utils/LogoTool";
-import UploadTool from "./components/ui/UploadTool";
-import SchoolNameTool from "./components/ui/SchoolNameTool";
-import { Textbox } from "fabric";
+import { IoImagesSharp, IoSettings } from "react-icons/io5";
+import { IoIosCloseCircle } from "react-icons/io";
+import { RiSendToBack, RiBringToFront } from "react-icons/ri";
+
+import useFabricCanvas from "./hooks/useFabricCanvas";
 import useUndoRedo from "./hooks/useUndoRedo";
+import * as tools from "./utils/canvasTools";
+import { addImage } from "./utils/imageTools";
+import { addBG } from "./utils/backGroundTool";
+import { addLogo } from "./utils/LogoTool";
+import { addWordCurve } from "./utils/wordCurveTool";
+import { bringForward, sendBackward } from "./utils/layerUtils";
+import { deleteActiveObject, handleDelete } from "./utils/deleteUtils";
+import {
+  createNewPage,
+  duplicateCurrentPage,
+  loadPageToCanvas,
+} from "./utils/pageUtils";
+
+import {
+  exportAsPNG,
+  saveCanvasState,
+  handleFileOpen,
+} from "./utils/exportUtils";
+
+import { Circle, Rect, Textbox } from "fabric";
+import useHistory from "./hooks/useUndoRedo";
+import { Redo, Undo } from "lucide-react";
+import { exportMultipleJsonToPDF } from "./utils/exportMultiPagePDF";
 
 function App() {
   const { canvasRef, canvas } = useFabricCanvas({ width: 300, height: 425 });
+  const [canvasList, setCanvasList] = useState([{ id: 1, json: null }]);
+  const [activePage, setActivePage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSideBarOpen, setSideBarOpen] = useState(false); // Used for mobile off-canvas menu
+  const [isSideBarOpen, setSideBarOpen] = useState(false);
   const [tool, setTool] = useState(null);
-  const { undo, saveState } = useUndoRedo(canvas);
-
   const [showDelete, setShowDelete] = useState(false);
 
   const handleNavClick = (item) => {
@@ -48,25 +64,6 @@ function App() {
     setTool(item);
   };
 
-  const bringForward = () => {
-    const active = canvas.getActiveObject();
-    if (active) {
-      canvas.bringObjectForward(active);
-      canvas.requestRenderAll();
-    }
-  };
-  const sendBackward = () => {
-    const active = canvas.getActiveObject();
-    if (active) {
-      canvas.sendObjectBackwards(active);
-      canvas.requestRenderAll();
-    }
-  };
-
-  // Toggles the mobile sidebar
-  const handleSideBar = () => {
-    setSideBarOpen(!isSideBarOpen);
-  };
   const handler = {
     addSquare: () => tools.addSquare(canvas),
     addRounded: () => tools.addRoundedSquare(canvas),
@@ -84,40 +81,6 @@ function App() {
     addWordArt_7: () => tools.addWordArt_7(canvas),
   };
 
-  const deleteActiveObject = useCallback(
-    (e) => {
-      if (e.key === "Delete") {
-        e.preventDefault();
-
-        if (canvas) {
-          const activeObjects = canvas.getActiveObjects();
-
-          if (activeObjects.length > 0) {
-            activeObjects.forEach((obj) => {
-              canvas.remove(obj);
-            });
-
-            canvas.discardActiveObject();
-            canvas.requestRenderAll();
-          }
-        }
-      }
-    },
-    [canvas]
-  );
-  const handleDelete = () => {
-    const activeObjects = canvas.getActiveObjects();
-
-    if (activeObjects.length > 0) {
-      activeObjects.forEach((obj) => {
-        canvas.remove(obj);
-      });
-
-      canvas.discardActiveObject();
-      canvas.requestRenderAll();
-    }
-  };
-
   const addSchoolNameText = (text) => {
     canvas.add(
       new Textbox(text, {
@@ -132,114 +95,146 @@ function App() {
     );
   };
 
+  // --- Canvas event listeners
   useEffect(() => {
     if (!canvas) {
       document.removeEventListener("keydown", deleteActiveObject);
       return;
     }
 
+    const saveCurrentPage = () => {
+      setCanvasList((prev) =>
+        prev.map((p) =>
+          p.id === activePage ? { ...p, json: canvas.toJSON() } : p
+        )
+      );
+    };
+    const handleChange = () => {
+      saveCurrentPage();
+    };
     canvas.on("selection:created", () => setShowDelete(true));
     canvas.on("selection:updated", () => setShowDelete(true));
     canvas.on("selection:cleared", () => setShowDelete(false));
 
-    canvas.on("object:added", saveState);
-    canvas.on("object:modified", saveState);
-    canvas.on("object:removed", saveState);
-    document.addEventListener("keydown", deleteActiveObject);
+    canvas.on("object:added", handleChange);
+
+    canvas.on("object:modified", handleChange);
+    canvas.on("object:removed", handleChange);
+    canvas.on("selection:cleared", handleChange);
+
+    document.addEventListener("keydown", (e) => deleteActiveObject(e, canvas));
 
     return () => {
-      document.removeEventListener("keydown", deleteActiveObject);
-      canvas.off("object:added", saveState);
-      canvas.off("object:modified", saveState);
-      canvas.off("object:removed", saveState);
+      document.removeEventListener("keydown", (e) =>
+        deleteActiveObject(e, canvas)
+      );
+      canvas.off("object:added", handleChange);
+      canvas.off("object:modified", handleChange);
+      canvas.off("object:removed", handleChange);
+      canvas.off("selection:cleared", handleChange);
     };
-  }, [canvas, deleteActiveObject, saveState]);
-  const exportAsPNG = () => {
-    const fileName = prompt("Enter file name:");
-    if (canvas) {
-      const dataURL = canvas.toDataURL({
-        format: "png",
-        quality: 1.0,
-        multiplier: 4,
-      });
+  }, [canvas, activePage, canvasList]);
 
-      const link = document.createElement("a");
-      link.href = dataURL;
-      link.download = fileName; // File name
+  const { undo, redo, canUndo, canRedo } = useHistory(canvas);
 
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
-  const saveCanvasState = () => {
-    const fileName = prompt("Enter file name:");
-    if (canvas) {
-      const json = canvas.toJSON();
-
-      const jsonString = JSON.stringify(json);
-
-      const blob = new Blob([jsonString], { type: "application/json" });
-
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-  };
-  const handleFileOpen = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-      const json = event.target.result;
-
-      if (canvas) {
-        canvas.clear();
-        canvas.loadFromJSON(json).then((canvas) => canvas.requestRenderAll());
-      }
-    };
-    reader.readAsText(file);
-
-    // Clear the input value to allow re-selection of the same file
-    e.target.value = null;
-  };
   return (
     <div className="bg-gray-300 flex h-screen w-full flex-col overflow-hidden">
       <Header
-        onExport={exportAsPNG}
-        onSave={saveCanvasState}
-        onOpen={handleFileOpen}
-        undo={undo}
+        onExport={() => exportAsPNG(canvas)}
+        onSave={() => saveCanvasState(canvas)}
+        onOpen={(e) => handleFileOpen(e, canvas)}
       />
-      {/* Top bar with Menu icon (always visible) and Settings icon */}
+      <section className="flex gap-3 items-center px-5 py-2 bg-gray-100 border-b">
+        <button
+          className="bg-green-600 text-white px-3 py-1 rounded"
+          onClick={() =>
+            createNewPage({
+              canvas,
+              canvasList,
+              setCanvasList,
+              setActivePage,
+            })
+          }
+        >
+          ➕
+        </button>
+
+        <button
+          className="bg-blue-600 text-white px-3 py-1 rounded"
+          onClick={() =>
+            duplicateCurrentPage({
+              canvas,
+              canvasList,
+              setCanvasList,
+              setActivePage,
+            })
+          }
+        >
+          📄
+        </button>
+
+        <select
+          value={activePage}
+          onChange={(e) => {
+            const id = Number(e.target.value);
+            setActivePage(id);
+            const selected = canvasList.find((p) => p.id === id);
+            loadPageToCanvas({
+              canvas,
+              json: selected?.json || null,
+              pageDefaults: {
+                width: 300,
+                height: 425,
+                backgroundColor: "#ffffff",
+              },
+            });
+          }}
+          className="border px-2 py-1 rounded"
+        >
+          {canvasList.map((p, idx) => (
+            <option key={p.id} value={p.id}>
+              Page {idx + 1}
+            </option>
+          ))}
+        </select>
+        <button
+          className=" p-1 cursor-pointer"
+          disabled={!canUndo}
+          onClick={undo}
+        >
+          <Undo />
+        </button>
+        <button
+          className="p-1 cursor-pointer"
+          disabled={!canRedo}
+          onClick={redo}
+        >
+          <Redo />
+        </button>
+        <button onClick={() => exportMultipleJsonToPDF(canvasList)}>
+          Save
+        </button>
+      </section>
+
       <section className="w-full bg-gray-100 text-2xl flex justify-between px-7 py-3 md:hidden">
-        {/* Menu icon to toggle the mobile sidebar */}
-        {/* <IoMenu className="cursor-pointer" onClick={handleSideBar} /> */}
+        {showDelete && (
+          <section className="absolute bottom-3 left-33 z-10 flex items-center gap-2 bg-white px-4 py-2 rounded-xl">
+            <button
+              className="text-3xl text-red-500 cursor-pointer"
+              onClick={() => handleDelete(canvas)}
+            >
+              <IoIosCloseCircle />
+            </button>
+            <button onClick={() => sendBackward(canvas)} className="text-3xl">
+              <RiSendToBack />
+            </button>
+            <button onClick={() => bringForward(canvas)} className="text-3xl">
+              <RiBringToFront />
+            </button>
+          </section>
+        )}
+
         <section className="flex gap-5">
-          {showDelete && (
-            <section className="absolute bottom-3 left-33 z-10 flex items-center gap-2 bg-white px-4 py-2 rounded-xl">
-              <button
-                className="text-3xl text-red-500 cursor-pointer"
-                onClick={handleDelete}
-              >
-                <IoIosCloseCircle />
-              </button>
-              <button onClick={sendBackward} className="text-3xl">
-                <RiSendToBack />
-              </button>
-              <button onClick={bringForward} className="text-3xl">
-                <RiBringToFront />
-              </button>
-            </section>
-          )}
           <FaTextHeight onClick={() => handleNavClick("Text")} />
           <IoImagesSharp onClick={() => handleNavClick("Images")} />
           <FaShapes onClick={() => handleNavClick("Shapes")} />
@@ -248,41 +243,36 @@ function App() {
           <FaBuilding onClick={() => handleNavClick("School Name")} />
           <FaUpload onClick={() => handleNavClick("Upload")} />
         </section>
-        <IoSettings className="cursor-pointer" onClick={handleSideBar} />
+
+        <IoSettings
+          className="cursor-pointer"
+          onClick={() => setSideBarOpen(!isSideBarOpen)}
+        />
       </section>
 
-      {/* Main Content Area */}
       <main className="flex flex-1 overflow-hidden">
-        <div
-          className={`
-            bg-white h-full w-[230px] z-20 transition-all duration-300 
-            md:relative md:inline md:translate-x-0 fixed -left-60 md:left-0
-          `}
-        >
-          {/* Tool Modals Content (now inside the sidebar div for organization) */}
+        {/* Sidebar */}
+        <div className="bg-white h-full w-[230px] z-20 transition-all duration-300 md:relative md:inline md:translate-x-0 fixed -left-60 md:left-0">
           <section className="h-full overflow-y-auto">
             <ToolModal
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
             >
-              {tool === "Text" && <TextTool action={handler} />}
+              {tool === "Text" && (
+                <TextTool
+                  action={handler}
+                  addWordCurvature={() => addWordCurve(canvas)}
+                />
+              )}
               {tool === "Images" && (
                 <ImageTool action={(url) => addImage(canvas, url)} />
               )}
               {tool === "Shapes" && <ShapeTool action={handler} />}
               {tool === "Background" && (
-                <BGTool
-                  addBackground={(url) => {
-                    addBG(canvas, url);
-                  }}
-                />
+                <BGTool addBackground={(url) => addBG(canvas, url)} />
               )}
               {tool === "School Logo" && (
-                <LogoTool
-                  addBackground={(url) => {
-                    addLogo(canvas, url);
-                  }}
-                />
+                <LogoTool addBackground={(url) => addLogo(canvas, url)} />
               )}
               {tool === "Upload" && <UploadTool canvas={canvas} />}
               {tool === "School Name" && (
@@ -292,7 +282,6 @@ function App() {
               )}
             </ToolModal>
 
-            {/* Sidebar Tools List */}
             <section className="mt-5">
               <h1 className="text-xl font-semibold px-3 text-gray-500">
                 Design Tools
@@ -346,12 +335,11 @@ function App() {
           </section>
         </div>
 
-        {/* Backdrop for mobile sidebar (optional, but improves UX) */}
-
-        {/* Canvas and Settings Wrapper */}
-        <div className="flex justify-center items-center h-scree w-full relative">
+        {/* Canvas */}
+        <div className="flex justify-center items-center h-screen w-full relative">
           <canvas ref={canvasRef}></canvas>
         </div>
+
         <Settings canvas={canvas} isSideBarOpen={isSideBarOpen} />
       </main>
     </div>
