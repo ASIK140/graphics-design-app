@@ -51,7 +51,7 @@ export const addWordCurve = (canvas, str = "Fabric.js Curved Text") => {
   const radius = 150;
   const centerX = canvas.getWidth() / 2;
   const centerY = canvas.getHeight() / 2 + 80;
-
+  str = prompt("Enter Your Text");
   // Span an arc centered at the bottom (3π/2)
   const baseAngle = Math.PI * 1.5; // bottom center
   const arc = Math.PI / 1.25; // how wide the curve is

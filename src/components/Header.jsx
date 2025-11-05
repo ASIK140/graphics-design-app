@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { FaUndo } from "react-icons/fa";
-function Header({ onExport, onOpen, onSave }) {
+function Header({ onExport, onOpen, onSave, onExportPDF }) {
   const fileInputRef = useRef(null);
   return (
     <header className="flex justify-between bg-white py-3 px-5 items-center">
@@ -24,12 +24,20 @@ function Header({ onExport, onOpen, onSave }) {
         >
           Save Work
         </button>
-        <button
-          className="bg-blue-500 p-2 rounded-md text-white px-5 cursor-pointer"
-          onClick={onExport}
-        >
-          Export
-        </button>
+        <section>
+          <button
+            className="bg-blue-500 p-2 rounded-md text-white px-5 mr-3 cursor-pointer"
+            onClick={onExport}
+          >
+            PNG
+          </button>
+          <button
+            className="bg-blue-500 p-2 rounded-md text-white px-5 cursor-pointer"
+            onClick={onExportPDF}
+          >
+            PDF
+          </button>
+        </section>
       </section>
     </header>
   );

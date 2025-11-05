@@ -25,7 +25,6 @@ import { IoIosCloseCircle } from "react-icons/io";
 import { RiSendToBack, RiBringToFront } from "react-icons/ri";
 
 import useFabricCanvas from "./hooks/useFabricCanvas";
-import useUndoRedo from "./hooks/useUndoRedo";
 import * as tools from "./utils/canvasTools";
 import { addImage } from "./utils/imageTools";
 import { addBG } from "./utils/backGroundTool";
@@ -143,6 +142,7 @@ function App() {
         onExport={() => exportAsPNG(canvas)}
         onSave={() => saveCanvasState(canvas)}
         onOpen={(e) => handleFileOpen(e, canvas)}
+        onExportPDF={() => exportMultipleJsonToPDF(canvasList)}
       />
       <section className="flex gap-3 items-center px-5 py-2 bg-gray-100 border-b">
         <button
@@ -210,9 +210,6 @@ function App() {
           onClick={redo}
         >
           <Redo />
-        </button>
-        <button onClick={() => exportMultipleJsonToPDF(canvasList)}>
-          Save
         </button>
       </section>
 
