@@ -11,16 +11,10 @@ import Canvas from "./Canvas";
 // import FrontendView from "./pages/FrontendView";
 
 export default function App() {
-  const isAdmin = localStorage.getItem("isAdmin");
-
   return (
     <Router>
       <Routes>
-        {/* <Route path="/login" element={<Login />} /> */}
-        <Route
-          path="/admin"
-          element={isAdmin ? <AdminPanel /> : <Navigate to="/login" />}
-        />
+        <Route path="/admin" element={<AdminPanel />} />
         <Route path="/" element={<Canvas />} />
       </Routes>
     </Router>
