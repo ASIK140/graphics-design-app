@@ -26,6 +26,12 @@ function TextTool({ action, addWordCurvature }) {
         >
           Simple Text
         </button>
+        <button
+          className="border-gray-200 border-2 w-full rounded-sm h-10  cursor-pointer mb-2 hover:bg-gray-200 transition-all"
+          onClick={action.addBengaliText}
+        >
+          বাংলা ফন্ট
+        </button>
       </section>
       <section>
         <h1 className=" font-semibold mb-2">Word Art</h1>

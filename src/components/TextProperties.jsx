@@ -22,6 +22,7 @@ const fonts = [
 
   { name: "Impact", category: "display" },
   { name: "Comic Sans MS", category: "display" },
+  { name: "Noto Sans Bengali", category: "serif" },
 ];
 function TextProperties({
   fontSize,

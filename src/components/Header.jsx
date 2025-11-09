@@ -1,30 +1,41 @@
 import React, { useRef } from "react";
 import { FaUndo } from "react-icons/fa";
+import { FolderOpenDot, Save, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 function Header({ onExport, onOpen, onSave, onExportPDF }) {
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
   return (
     <header className="flex justify-between bg-white py-3 px-5 items-center">
       <section className="flex justify-between w-full">
-        <button
-          className="bg-[#11224E] rounded-md text-white cursor-pointer p-2"
-          onClick={() => fileInputRef.current.click()}
-        >
-          Open Work
-        </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          style={{ display: "none" }} // Hide the default input
-          accept=".json, application/json" // Only accept JSON files
-          onChange={onOpen}
-        />
-        <button
-          className="bg-[#FFC50F] p-2 rounded-md text-black px-5 cursor-pointer"
-          onClick={onSave}
-        >
-          Save Work
-        </button>
-        <section>
+        <section className="flex gap-2">
+          <button
+            className="bg-[#11224E] rounded-md text-white cursor-pointer px-2 md:p-2"
+            onClick={() => fileInputRef.current.click()}
+          >
+            <FolderOpenDot />
+          </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }} // Hide the default input
+            accept=".json, application/json" // Only accept JSON files
+            onChange={onOpen}
+          />
+          <button
+            className="bg-[#FFC50F] p-2 rounded-md text-black px-2 md:p-2 cursor-pointer"
+            onClick={onSave}
+          >
+            <Save />
+          </button>
+        </section>
+        <section className="flex items-center">
+          <button
+            className="bg-blue-500 p-2 rounded-md text-white px-5 mr-3 cursor-pointer"
+            onClick={() => navigate("/admin")}
+          >
+            <User />
+          </button>
           <button
             className="bg-blue-500 p-2 rounded-md text-white px-5 mr-3 cursor-pointer"
             onClick={onExport}

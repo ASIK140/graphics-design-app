@@ -6,6 +6,7 @@ import CanvasProperties from "./CanvasProperties";
 import { useEffect, useState } from "react";
 import ImageProperties from "./ImageProperties";
 import { applyMask } from "../utils/imageMask";
+import { loadCustomFont } from "../utils/loadCustomFont";
 
 function Settings({ canvas, isSideBarOpen }) {
   const [canvasWidth, setCanvasWidth] = useState("");
@@ -118,7 +119,8 @@ function Settings({ canvas, isSideBarOpen }) {
       canvas.renderAll();
     }
   };
-  const handleFontChange = (e) => {
+  const handleFontChange = async (e) => {
+    await loadCustomFont("Noto Sans Bengali");
     const value = e.target.value;
     if (selectedObject?.type === "textbox") {
       selectedObject.set({ fontFamily: value });

@@ -102,6 +102,19 @@ export const addSimpleText = (canvas) => {
     })
   );
 };
+export const addBengaliText = (canvas) => {
+  canvas.add(
+    new Textbox("এইটা বাংলা টেক্সট", {
+      left: 100,
+      top: 100,
+      fontSize: 20,
+      width: 200,
+      fill: "black",
+      fontWeight: 500,
+      textAlign: "center",
+    })
+  );
+};
 
 export const addWordArt_1 = (canvas) => {
   canvas.add(
