@@ -51,7 +51,7 @@ import { Redo, Undo } from "lucide-react";
 import { exportMultipleJsonToPDF } from "./utils/exportMultiPagePDF";
 
 function App() {
-  const { canvasRef, canvas } = useFabricCanvas({ width: 300, height: 425 });
+  const { canvasRef, canvas } = useFabricCanvas();
   const [canvasList, setCanvasList] = useState([{ id: 1, json: null }]);
   const [activePage, setActivePage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -144,7 +144,7 @@ function App() {
         onExport={() => exportAsPNG(canvas)}
         onSave={() => saveCanvasState(canvas)}
         onOpen={(e) => handleFileOpen(e, canvas)}
-        onExportPDF={() => exportMultipleJsonToPDF(canvasList)}
+        onExportPDF={() => exportMultipleJsonToPDF(canvasList, canvas)}
       />
       <section className="flex gap-3 items-center px-5 py-2 bg-gray-100 border-b">
         <button

@@ -239,6 +239,8 @@ function Settings({ canvas, isSideBarOpen }) {
           canvas={canvas}
           onTextAlign={handleTextAlign}
           color={color}
+          opacity={opacity}
+          onOpacityChange={handleOpacityChange}
         />
       )}
       {selectedObject?.type === "image" && (

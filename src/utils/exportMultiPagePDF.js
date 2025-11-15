@@ -4,13 +4,16 @@ import { jsPDF } from "jspdf";
 
 export const exportMultipleJsonToPDF = async (
   jsonList = [],
+  canvas,
   fileName = "multi-page.pdf"
 ) => {
   if (!jsonList.length) return;
   const pdf = new jsPDF({ orientation: "p", unit: "px", format: "a4" });
   fileName = prompt("Enter Your File Name");
-  const width = 300;
-  const height = 425;
+  const width = canvas.width;
+  const height = canvas.height;
+  console.log(width, height);
+
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
 

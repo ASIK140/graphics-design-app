@@ -1,28 +1,43 @@
 import Inputs from "./ui/Inputs";
 const fonts = [
   // System fonts
-  { name: "Arial", category: "sans-serif" },
-  { name: "Helvetica", category: "sans-serif" },
-  { name: "Verdana", category: "sans-serif" },
-  { name: "Tahoma", category: "sans-serif" },
-  { name: "Trebuchet MS", category: "sans-serif" },
-  { name: "Gill Sans", category: "sans-serif" },
-  { name: "Segoe UI", category: "sans-serif" },
+  { name: "Arial", font: "Arial", category: "sans-serif" },
+  { name: "Helvetica", font: "Helvetica", category: "sans-serif" },
+  { name: "Verdana", font: "Verdana", category: "sans-serif" },
+  { name: "Tahoma", font: "Tahoma", category: "sans-serif" },
+  { name: "Trebuchet MS", font: "Trebuchet MS", category: "sans-serif" },
+  { name: "Gill Sans", font: "Gill Sans", category: "sans-serif" },
+  { name: "Segoe UI", font: "Segoe UI", category: "sans-serif" },
 
-  { name: "Times New Roman", category: "serif" },
-  { name: "Georgia", category: "serif" },
-  { name: "Palatino Linotype", category: "serif" },
-  { name: "Book Antiqua", category: "serif" },
-  { name: "Garamond", category: "serif" },
+  { name: "Times New Roman", font: "Times New Roman", category: "serif" },
+  { name: "Georgia", font: "Georgia", category: "serif" },
+  { name: "Palatino Linotype", font: "Palatino Linotype", category: "serif" },
+  { name: "Book Antiqua", font: "Book Antiqua", category: "serif" },
+  { name: "Garamond", font: "Garamond", category: "serif" },
 
-  { name: "Courier New", category: "monospace" },
-  { name: "Lucida Console", category: "monospace" },
-  { name: "Monaco", category: "monospace" },
-  { name: "Consolas", category: "monospace" },
+  { name: "Courier New", font: "Courier New", category: "monospace" },
+  { name: "Lucida Console", font: "Lucida Console", category: "monospace" },
+  { name: "Monaco", font: "Monaco", category: "monospace" },
+  { name: "Consolas", font: "Consolas", category: "monospace" },
 
-  { name: "Impact", category: "display" },
-  { name: "Comic Sans MS", category: "display" },
-  { name: "Noto Sans Bengali", category: "serif" },
+  { name: "Impact", font: "Impact", category: "display" },
+  { name: "Comic Sans MS", font: "Comic Sans MS", category: "display" },
+  { name: "গলদা ", font: "Galada", category: "serif" },
+  {
+    name: "নাতো সান্স বাঙ্গালী",
+    font: "Noto Sans Bengali",
+    category: "sans-serif",
+  },
+  {
+    name: "হিন্দি শিলিগুড়ি ",
+    font: "Hind Siliguri",
+    category: "sans-serif",
+  },
+  {
+    name: "আত্মা",
+    font: "Atma",
+    category: "sans-serif",
+  },
 ];
 function TextProperties({
   fontSize,
@@ -35,6 +50,8 @@ function TextProperties({
   onFontWeightChange,
   textAlign,
   onTextAlign,
+  onOpacityChange,
+  opacity,
 }) {
   return (
     <div className="px-4">
@@ -51,8 +68,8 @@ function TextProperties({
             {fonts.map((font, index) => (
               <option
                 key={index}
-                value={font.name}
-                style={{ fontFamily: font.name }}
+                value={font.font}
+                style={{ fontFamily: font.font }}
               >
                 {font.name}
               </option>
@@ -86,7 +103,7 @@ function TextProperties({
               onChange={onFontSizeChange}
             />
           </section>
-          <section className="flex gap-2">
+          <section className="flex gap-2 mb-3">
             <Inputs
               icon="Fill"
               type="color"
@@ -103,6 +120,12 @@ function TextProperties({
               <option value="right">Right</option>
             </select>
           </section>
+          <Inputs
+            icon="O"
+            type="number"
+            value={opacity * 100}
+            onChange={onOpacityChange}
+          />
         </section>
       </section>
     </div>

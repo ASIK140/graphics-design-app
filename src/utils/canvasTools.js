@@ -71,6 +71,7 @@ export const addHeadingText = (canvas) => {
       fill: "black",
       fontWeight: 700,
       textAlign: "center",
+      opacity: 1,
     })
   );
 };
@@ -110,6 +111,7 @@ export const addBengaliText = (canvas) => {
       fontSize: 20,
       width: 200,
       fill: "black",
+      fontFamily: "Noto Sans Bengali",
       fontWeight: 500,
       textAlign: "center",
     })
